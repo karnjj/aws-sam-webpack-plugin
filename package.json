@@ -1,6 +1,6 @@
 {
-  "name": "aws-sam-webpack-plugin",
-  "version": "0.12.0",
+  "name": "@karnjj/aws-sam-webpack-plugin",
+  "version": "0.1.0",
   "description": "Webpack plugin to replace the AWS SAM CLI build command",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/StackToolbox/aws-sam-webpack-plugin.git"
+    "url": "git+https://github.com/karnjj/aws-sam-webpack-plugin.git"
   },
   "keywords": [
     "webpack",
@@ -20,12 +20,12 @@
     "typescript",
     "babel"
   ],
-  "author": "Richard Buggy <rich@stacktoolbox.com>",
+  "author": "karnjj <karnjj@hotmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/StackToolbox/aws-sam-webpack-plugin/issues"
+    "url": "https://github.com/karnjj/aws-sam-webpack-plugin/issues"
   },
-  "homepage": "https://www.stacktoolbox.com/aws-sam-webpack-plugin",
+  "homepage": "https://github.com/karnjj/aws-sam-webpack-plugin",
   "dependencies": {
     "js-yaml": "^4.1.0",
     "yaml-cfn": "^0.3.1"
