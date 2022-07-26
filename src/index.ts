@@ -66,13 +66,18 @@ class AwsSamPlugin {
     projectPath: string,
     projectTemplateName: string,
     projectTemplate: string,
-    outFile: string
+    outFile: string,
+    nestedApplicationName?: string,
+    nestedApplicationPath?: string
   ): IEntryForResult {
     const entryPoints: IEntryPointMap = {};
     const launchConfigs: any[] = [];
     const samConfigs: SamConfig[] = [];
 
-    const samConfig = yaml.load(projectTemplate, { filename: projectTemplateName, schema }) as any;
+    const samConfig = yaml.load(projectTemplate, {
+      filename: projectTemplateName,
+      schema,
+    }) as any;
 
     const defaultRuntime = samConfig.Globals?.Function?.Runtime ?? null;
     const defaultHandler = samConfig.Globals?.Function?.Handler ?? null;
@@ -82,7 +87,10 @@ class AwsSamPlugin {
     for (const resourceKey in samConfig.Resources) {
       const resource = samConfig.Resources[resourceKey];
 
-      const buildRoot = projectPath === "" ? `.aws-sam/build` : `${projectPath}/.aws-sam/build`;
+      const applicationDirectory =
+        nestedApplicationName === undefined ? ".aws-sam/build" : `.aws-sam/build/${nestedApplicationName}`;
+
+      const buildRoot = projectPath === "" ? applicationDirectory : `${projectPath}/${applicationDirectory}`;
 
       // Correct paths for files that can be uploaded using "aws couldformation package"
       if (resource.Type === "AWS::ApiGateway::RestApi" && typeof resource.Properties.BodyS3Location === "string") {
@@ -219,7 +227,10 @@ class AwsSamPlugin {
         }
 
         const basePathPrefix = projectPath === "" ? "." : `./${projectPath}`;
-        const basePath = `${basePathPrefix}/${codeUri}`;
+        const basePath =
+          nestedApplicationPath === undefined
+            ? `${basePathPrefix}/${codeUri}`
+            : `./${nestedApplicationPath}/${basePathPrefix}/${codeUri}`;
         const fileBase = `${basePath}/${handlerComponents[0]}`;
 
         // Generate the launch config for the VS Code debugger
@@ -251,6 +262,35 @@ class AwsSamPlugin {
           samConfig,
           templateName: projectTemplateName,
         });
+      }
+      // Nested applications are handled differently
+      if (
+        resource.Type === "AWS::Serverless::Application" &&
+        typeof resource.Properties.Location === "string" &&
+        !resource.Properties.Location.startsWith("s3://")
+      ) {
+        const applicationPath = path.relative(projectPath || ".", path.dirname(resource.Properties.Location));
+        const applicationTemplate = path.relative(projectPath || ".", resource.Properties.Location);
+        const nestedResult = this.entryFor(
+          resourceKey,
+          projectPath,
+          path.basename(applicationTemplate),
+          fs.readFileSync(applicationTemplate).toString(),
+          outFile,
+          resourceKey,
+          applicationPath
+        );
+
+        launchConfigs.push(...nestedResult.launchConfigs);
+        samConfigs.push(...nestedResult.samConfigs);
+        Object.entries(nestedResult.entryPoints).forEach(([key, path]) => {
+          entryPoints[key] = path;
+        });
+
+        samConfig.Resources[resourceKey].Properties.Location = path.join(
+          resourceKey,
+          path.basename(applicationTemplate)
+        );
       }
     }
 
@@ -341,4 +381,4 @@ class AwsSamPlugin {
   }
 }
 
-export = AwsSamPlugin;
+export default AwsSamPlugin;
