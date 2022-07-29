@@ -1,5 +1,5 @@
 {
-  "name": "@karnjj/aws-sam-webpack-plugin",
+  "name": "@motorhub/aws-sam-webpack-plugin",
   "version": "0.1.1",
   "description": "Webpack plugin to replace the AWS SAM CLI build command",
   "main": "dist/index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/karnjj/aws-sam-webpack-plugin.git"
+    "url": "git+https://github.com/motorhub-th/aws-sam-webpack-plugin.git"
   },
   "keywords": [
     "webpack",
@@ -20,12 +20,12 @@
     "typescript",
     "babel"
   ],
-  "author": "karnjj <karnjj@hotmail.com>",
+  "author": "motorhub",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/karnjj/aws-sam-webpack-plugin/issues"
+    "url": "https://github.com/motorhub-th/aws-sam-webpack-plugin/issues"
   },
-  "homepage": "https://github.com/karnjj/aws-sam-webpack-plugin",
+  "homepage": "https://github.com/motorhub-th/aws-sam-webpack-plugin",
   "dependencies": {
     "js-yaml": "^4.1.0",
     "yaml-cfn": "^0.3.1"
